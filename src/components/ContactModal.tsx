@@ -1,12 +1,15 @@
-import { Copy, Mail, Phone, X } from 'lucide-react'
+import { Mail, Phone, X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { contactInfo } from '../content/siteContent'
 import { useLanguage } from '../context/LanguageContext'
+import { sendTelegramLead } from '../utils/sendTelegramLead'
 
 type ContactModalProps = {
   open: boolean
   onClose: () => void
 }
+
+type SubmitState = 'idle' | 'sending' | 'success' | 'error'
 
 const FOCUSABLE =
   'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
@@ -15,7 +18,7 @@ export function ContactModal({ open, onClose }: ContactModalProps) {
   const { locale } = useLanguage()
   const panelRef = useRef<HTMLDivElement | null>(null)
   const previousFocusRef = useRef<HTMLElement | null>(null)
-  const [copied, setCopied] = useState<'email' | 'phone' | null>(null)
+  const [submitState, setSubmitState] = useState<SubmitState>('idle')
 
   useEffect(() => {
     if (!open) return
@@ -60,21 +63,41 @@ export function ContactModal({ open, onClose }: ContactModalProps) {
 
   if (!open) return null
 
-  const copyValue = async (value: string, type: 'email' | 'phone') => {
-    try {
-      await navigator.clipboard.writeText(value)
-      setCopied(type)
-      window.setTimeout(() => setCopied(null), 1800)
-    } catch {
-      setCopied(null)
+  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+
+    const form = event.currentTarget
+    const data = new FormData(form)
+
+    const name = String(data.get('name') ?? '').trim()
+    const email = String(data.get('email') ?? '').trim()
+    const message = String(data.get('message') ?? '').trim()
+
+    if (!name || !email || !message) return
+
+    setSubmitState('sending')
+
+    const result = await sendTelegramLead({
+      name,
+      email,
+      message,
+      locale,
+    })
+
+    if (result.ok) {
+      form.reset()
+      setSubmitState('success')
+      return
     }
+
+    setSubmitState('error')
   }
 
-  const title = locale === 'ro' ? 'Contact rapid' : 'Быстрый контакт'
+  const title = locale === 'ro' ? 'Cere ofertă rapid' : 'Быстрый запрос оферты'
   const subtitle =
     locale === 'ro'
-      ? 'Scrie-ne și îți răspundem rapid. Trimite ce dorești pe site + domeniul dorit.'
-      : 'Напишите нам и мы быстро ответим. Отправьте, что вы хотите на сайте + желаемый домен.'
+      ? 'Completează scurt formularul și îți trimitem răspuns rapid pe contact.'
+      : 'Кратко заполните форму, и мы быстро ответим вам по контактам.'
 
   return (
     <div className="fixed inset-0 z-[90] flex items-center justify-center bg-black/70 px-4" onMouseDown={onClose} role="presentation">
@@ -98,59 +121,76 @@ export function ContactModal({ open, onClose }: ContactModalProps) {
           </button>
         </div>
 
-        <p className="mb-6 text-sm text-muted">{subtitle}</p>
+        <p className="mb-5 text-sm text-muted">{subtitle}</p>
 
-        <div className="space-y-4">
-          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-            <p className="mb-2 text-xs uppercase tracking-widest text-cyan">Email</p>
-            <p className="text-base text-white">{contactInfo.email}</p>
-            <div className="mt-3 flex flex-wrap gap-2">
-              <button
-                type="button"
-                onClick={() => copyValue(contactInfo.email, 'email')}
-                className="inline-flex items-center gap-2 rounded-lg border border-white/15 px-3 py-2 text-sm text-white transition hover:bg-white/10"
-              >
-                <Copy size={15} />
-                {locale === 'ro' ? 'Copiază email' : 'Копировать email'}
-              </button>
-              <a
-                href={`mailto:${contactInfo.email}`}
-                className="inline-flex items-center gap-2 rounded-lg bg-electric px-3 py-2 text-sm font-semibold text-white transition hover:bg-cyan"
-              >
-                <Mail size={15} />
-                mailto
-              </a>
-            </div>
-            {copied === 'email' ? (
-              <p className="mt-2 text-xs text-cyan">{locale === 'ro' ? 'Email copiat.' : 'Email скопирован.'}</p>
-            ) : null}
-          </div>
-
-          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-            <p className="mb-2 text-xs uppercase tracking-widest text-cyan">Telefon</p>
-            <p className="text-base text-white">{contactInfo.phone}</p>
-            <div className="mt-3 flex flex-wrap gap-2">
-              <button
-                type="button"
-                onClick={() => copyValue(contactInfo.phone, 'phone')}
-                className="inline-flex items-center gap-2 rounded-lg border border-white/15 px-3 py-2 text-sm text-white transition hover:bg-white/10"
-              >
-                <Copy size={15} />
-                {locale === 'ro' ? 'Copiază număr' : 'Копировать номер'}
-              </button>
-              <a
-                href={`tel:${contactInfo.phone}`}
-                className="inline-flex items-center gap-2 rounded-lg bg-electric px-3 py-2 text-sm font-semibold text-white transition hover:bg-cyan"
-              >
-                <Phone size={15} />
-                tel
-              </a>
-            </div>
-            {copied === 'phone' ? (
-              <p className="mt-2 text-xs text-cyan">{locale === 'ro' ? 'Număr copiat.' : 'Номер скопирован.'}</p>
-            ) : null}
-          </div>
+        <div className="mb-5 grid gap-2 rounded-2xl border border-white/10 bg-white/[0.03] p-4 text-sm text-white/90">
+          <a href={`mailto:${contactInfo.email}`} className="inline-flex items-center gap-2 transition hover:text-cyan">
+            <Mail size={16} className="text-cyan" />
+            {contactInfo.email}
+          </a>
+          <a href={`tel:${contactInfo.phone}`} className="inline-flex items-center gap-2 transition hover:text-cyan">
+            <Phone size={16} className="text-cyan" />
+            {contactInfo.phone}
+          </a>
         </div>
+
+        <form onSubmit={onSubmit} className="space-y-3">
+          <input
+            name="name"
+            required
+            type="text"
+            placeholder={locale === 'ro' ? 'Nume' : 'Имя'}
+            className="w-full rounded-xl border border-white/15 bg-obsidian px-3 py-2 text-sm text-white outline-none transition focus:border-cyan"
+          />
+          <input
+            name="email"
+            required
+            type="email"
+            placeholder="Email"
+            className="w-full rounded-xl border border-white/15 bg-obsidian px-3 py-2 text-sm text-white outline-none transition focus:border-cyan"
+          />
+          <textarea
+            name="message"
+            required
+            rows={4}
+            placeholder={
+              locale === 'ro'
+                ? 'Ce site dorești + domeniul dorit'
+                : 'Какой сайт нужен + желаемый домен'
+            }
+            className="w-full rounded-xl border border-white/15 bg-obsidian px-3 py-2 text-sm text-white outline-none transition focus:border-cyan"
+          />
+
+          <button
+            type="submit"
+            disabled={submitState === 'sending'}
+            className="w-full rounded-xl bg-electric px-4 py-3 text-sm font-semibold text-white transition hover:bg-cyan disabled:cursor-not-allowed disabled:opacity-70"
+          >
+            {submitState === 'sending'
+              ? locale === 'ro'
+                ? 'Se trimite...'
+                : 'Отправка...'
+              : locale === 'ro'
+                ? 'Trimite cererea'
+                : 'Отправить запрос'}
+          </button>
+        </form>
+
+        {submitState === 'success' ? (
+          <p className="mt-3 rounded-xl border border-cyan/40 bg-cyan/10 px-3 py-2 text-xs text-white">
+            {locale === 'ro'
+              ? 'Mesaj trimis pe Telegram. Revenim rapid.'
+              : 'Сообщение отправлено в Telegram. Скоро ответим.'}
+          </p>
+        ) : null}
+
+        {submitState === 'error' ? (
+          <p className="mt-3 rounded-xl border border-red-500/40 bg-red-500/10 px-3 py-2 text-xs text-white">
+            {locale === 'ro'
+              ? 'Eroare la trimitere. Scrie direct pe email/telefon.'
+              : 'Ошибка отправки. Напишите напрямую на email/телефон.'}
+          </p>
+        ) : null}
       </div>
     </div>
   )
