@@ -39,6 +39,7 @@ Website complet multi-page pentru companie de creare site-uri, realizat cu **Vit
 - SEO de bază pe fiecare pagină:
   - title + description
   - OpenGraph simplu
+- Formular Contacte cu trimitere directă pe Telegram
 
 ## Structură importantă
 
@@ -46,6 +47,7 @@ Website complet multi-page pentru companie de creare site-uri, realizat cu **Vit
 - `src/content/siteContent.ts` – tot conținutul RO/RU (texte, FAQ, testimoniale, SEO)
 - `src/components/` – componente reutilizabile (`Header`, `Footer`, `PricingCards`, `ContactModal`, `LanguageToggle`, `Section`)
 - `src/pages/` – paginile principale
+- `src/utils/sendTelegramLead.ts` – trimiterea formularului către Telegram Bot API
 
 ## Instalare și rulare locală
 
@@ -61,7 +63,16 @@ cd "C:\Users\condr\Desktop\Siteuri-Abonament"
 npm install
 ```
 
-### 3) Rulează în development (port 8006)
+### 3) Configurează variabilele pentru Telegram
+
+Creează `.env.local`:
+
+```env
+VITE_TELEGRAM_BOT_TOKEN=...
+VITE_TELEGRAM_CHAT_ID=...
+```
+
+### 4) Rulează în development (port 8006)
 
 ```bash
 npm run dev -- --host 0.0.0.0 --port 8006
@@ -70,6 +81,13 @@ npm run dev -- --host 0.0.0.0 --port 8006
 Acces local:
 
 - `http://localhost:8006`
+
+## Deploy GitHub Pages
+
+Workflow-ul `.github/workflows/deploy-pages.yml` folosește GitHub Secrets:
+
+- `TELEGRAM_BOT_TOKEN`
+- `TELEGRAM_CHAT_ID`
 
 ## Build + verificări
 
@@ -80,4 +98,4 @@ npm run build
 
 ## Notă
 
-Formularul din pagina Contacte este **fără backend** (conform cerinței). La submit afișează confirmare și oferă acțiuni directe de contact (copy / mailto / tel).
+Formularul din Contacte trimite mesajul către Telegram prin Bot API și, la succes, afișează confirmare în UI.

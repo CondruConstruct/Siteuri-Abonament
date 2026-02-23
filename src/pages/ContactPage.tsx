@@ -3,6 +3,9 @@ import { Section } from '../components/Section'
 import { contactContent, contactInfo, seoByPage } from '../content/siteContent'
 import { useLanguage } from '../context/LanguageContext'
 import { useSeo } from '../hooks/useSeo'
+import { sendTelegramLead } from '../utils/sendTelegramLead'
+
+type SubmitState = 'idle' | 'sending' | 'success' | 'error'
 
 export function ContactPage() {
   const { locale } = useLanguage()
@@ -10,14 +13,39 @@ export function ContactPage() {
   const seo = seoByPage.contact[locale]
   useSeo(seo.title, seo.description)
 
-  const [submitted, setSubmitted] = useState(false)
   const [copied, setCopied] = useState<'email' | 'phone' | null>(null)
+  const [submitState, setSubmitState] = useState<SubmitState>('idle')
 
   const labels = contactContent.form[locale]
 
-  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    setSubmitted(true)
+
+    const form = event.currentTarget
+    const formData = new FormData(form)
+
+    const name = String(formData.get('name') ?? '').trim()
+    const email = String(formData.get('email') ?? '').trim()
+    const message = String(formData.get('message') ?? '').trim()
+
+    if (!name || !email || !message) return
+
+    setSubmitState('sending')
+
+    const result = await sendTelegramLead({
+      name,
+      email,
+      message,
+      locale,
+    })
+
+    if (result.ok) {
+      setSubmitState('success')
+      form.reset()
+      return
+    }
+
+    setSubmitState('error')
   }
 
   const copy = async (value: string, type: 'email' | 'phone') => {
@@ -29,6 +57,9 @@ export function ContactPage() {
       setCopied(null)
     }
   }
+
+  const showSuccess = submitState === 'success'
+  const showError = submitState === 'error'
 
   return (
     <>
@@ -56,6 +87,7 @@ export function ContactPage() {
                 {labels.name}
                 <input
                   required
+                  name="name"
                   type="text"
                   className="mt-2 w-full rounded-xl border border-white/15 bg-obsidian px-3 py-2 text-sm text-white outline-none transition focus:border-cyan"
                 />
@@ -65,6 +97,7 @@ export function ContactPage() {
                 {labels.email}
                 <input
                   required
+                  name="email"
                   type="email"
                   className="mt-2 w-full rounded-xl border border-white/15 bg-obsidian px-3 py-2 text-sm text-white outline-none transition focus:border-cyan"
                 />
@@ -74,6 +107,7 @@ export function ContactPage() {
                 {labels.message}
                 <textarea
                   required
+                  name="message"
                   rows={5}
                   className="mt-2 w-full rounded-xl border border-white/15 bg-obsidian px-3 py-2 text-sm text-white outline-none transition focus:border-cyan"
                 />
@@ -81,15 +115,24 @@ export function ContactPage() {
 
               <button
                 type="submit"
-                className="rounded-full bg-electric px-6 py-3 text-sm font-semibold text-white transition hover:bg-cyan"
+                disabled={submitState === 'sending'}
+                className="rounded-full bg-electric px-6 py-3 text-sm font-semibold text-white transition hover:bg-cyan disabled:cursor-not-allowed disabled:opacity-70"
               >
-                {labels.submit}
+                {submitState === 'sending'
+                  ? locale === 'ro'
+                    ? 'Se trimite...'
+                    : 'Отправка...'
+                  : labels.submit}
               </button>
             </form>
 
-            {submitted ? (
+            {showSuccess ? (
               <div className="mt-6 rounded-2xl border border-cyan/40 bg-cyan/10 p-4 text-sm text-white">
-                <p>{labels.success}</p>
+                <p>
+                  {locale === 'ro'
+                    ? 'Mesaj trimis cu succes pe Telegram. Îți răspundem rapid.'
+                    : 'Сообщение успешно отправлено в Telegram. Мы быстро ответим.'}
+                </p>
                 <div className="mt-3 flex flex-wrap gap-2">
                   <button
                     type="button"
@@ -123,6 +166,14 @@ export function ContactPage() {
                         : 'Номер скопирован.'}
                   </p>
                 ) : null}
+              </div>
+            ) : null}
+
+            {showError ? (
+              <div className="mt-6 rounded-2xl border border-red-500/40 bg-red-500/10 p-4 text-sm text-white">
+                {locale === 'ro'
+                  ? 'Nu am putut trimite mesajul pe Telegram acum. Contactează-ne direct pe email/telefon.'
+                  : 'Не удалось отправить сообщение в Telegram прямо сейчас. Свяжитесь с нами напрямую по email/телефону.'}
               </div>
             ) : null}
           </div>
