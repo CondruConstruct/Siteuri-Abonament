@@ -2,7 +2,7 @@ import type { Locale, ProjectItem, Testimonial } from '../types'
 
 export const contactInfo = {
   email: 'jbpsuport@gmail.com',
-  phone: '+373068694844',
+  phone: '+37368694844',
 }
 
 export const navLabels: Record<Locale, { key: string; label: string; path: string }[]> = {

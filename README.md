@@ -25,7 +25,7 @@ Website complet multi-page pentru companie de creare site-uri, realizat cu **Vit
 - Header sticky + CTA „Contactează-ne”
 - Contacte mereu vizibile în header + footer:
   - `jbpsuport@gmail.com`
-  - `+373068694844`
+  - `+37368694844`
 - Site bilingv complet: **RO / RU** (toggle în header, persistă în localStorage)
 - Modal contact reutilizabil (accesibil):
   - close cu `ESC`
