@@ -1,7 +1,14 @@
 import { Check } from 'lucide-react'
+import type { Locale } from '../types'
 import { commonPricingBenefits, pricingData } from '../config/pricingData'
 import { useContactModal } from '../context/ContactModalContext'
 import { useLanguage } from '../context/LanguageContext'
+
+const includedBenefitsLabel: Record<Locale, string> = {
+  ro: 'Beneficii incluse',
+  ru: 'Включённые преимущества',
+  en: 'Included benefits',
+}
 
 export function PricingCards() {
   const { locale } = useLanguage()
@@ -38,9 +45,7 @@ export function PricingCards() {
           </ul>
 
           <div className="mt-5 border-t border-white/10 pt-4">
-            <p className="text-[11px] uppercase tracking-[0.15em] text-white/70">
-              {locale === 'ro' ? 'Beneficii incluse' : 'Включённые преимущества'}
-            </p>
+            <p className="text-[11px] uppercase tracking-[0.15em] text-white/70">{includedBenefitsLabel[locale]}</p>
             <ul className="mt-3 space-y-2 text-xs text-slate-300">
               {commonPricingBenefits[locale].map(item => (
                 <li key={item} className="flex items-start gap-2">

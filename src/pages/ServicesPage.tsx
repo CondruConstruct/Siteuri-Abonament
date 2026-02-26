@@ -1,4 +1,5 @@
 import { Check } from 'lucide-react'
+import type { Locale } from '../types'
 import { PricingCards } from '../components/PricingCards'
 import { Section } from '../components/Section'
 import { pricingData } from '../config/pricingData'
@@ -6,6 +7,24 @@ import { ctaLabels, seoByPage, servicesContent } from '../content/siteContent'
 import { useContactModal } from '../context/ContactModalContext'
 import { useLanguage } from '../context/LanguageContext'
 import { useSeo } from '../hooks/useSeo'
+
+const tableTitleByLocale: Record<Locale, string> = {
+  ro: 'Tabel comparativ',
+  ru: 'Сравнительная таблица',
+  en: 'Comparison table',
+}
+
+const featureLabelByLocale: Record<Locale, string> = {
+  ro: 'Caracteristică',
+  ru: 'Параметр',
+  en: 'Feature',
+}
+
+const optionalPaymentByLocale: Record<Locale, string> = {
+  ro: 'Opțional (+50 EUR)',
+  ru: 'Опционально (+50 EUR)',
+  en: 'Optional (+50 EUR)',
+}
 
 export function ServicesPage() {
   const { locale } = useLanguage()
@@ -16,7 +35,7 @@ export function ServicesPage() {
 
   const comparisonRows = [
     {
-      name: { ro: 'Număr pagini', ru: 'Количество страниц' },
+      name: { ro: 'Număr pagini', ru: 'Количество страниц', en: 'Number of pages' },
       values: [
         pricingData[0].subtitle[locale],
         pricingData[1].subtitle[locale],
@@ -24,20 +43,24 @@ export function ServicesPage() {
       ],
     },
     {
-      name: { ro: '2 limbi RO/RU', ru: '2 языка RO/RU' },
+      name: { ro: '2 limbi RO/RU', ru: '2 языка RO/RU', en: '2 languages RO/RU' },
       values: ['✓', '✓', '✓'],
     },
     {
-      name: { ro: 'Dashboard produse', ru: 'Панель товаров' },
+      name: { ro: 'Dashboard produse', ru: 'Панель товаров', en: 'Product dashboard' },
       values: ['—', '—', '✓'],
     },
     {
-      name: { ro: 'Produse nelimitate', ru: 'Неограниченные товары' },
+      name: { ro: 'Produse nelimitate', ru: 'Неограниченные товары', en: 'Unlimited products' },
       values: ['—', '—', '✓'],
     },
     {
-      name: { ro: 'Sistem de plată inclus', ru: 'Система оплаты включена' },
-      values: ['—', '—', locale === 'ro' ? 'Opțional (+50 EUR)' : 'Опционально (+50 EUR)'],
+      name: {
+        ro: 'Sistem de plată inclus',
+        ru: 'Система оплаты включена',
+        en: 'Payment system included',
+      },
+      values: ['—', '—', optionalPaymentByLocale[locale]],
     },
   ]
 
@@ -47,12 +70,12 @@ export function ServicesPage() {
         <PricingCards />
       </Section>
 
-      <Section title={locale === 'ro' ? 'Tabel comparativ' : 'Сравнительная таблица'}>
+      <Section title={tableTitleByLocale[locale]}>
         <div className="overflow-x-auto rounded-3xl border border-white/10">
           <table className="min-w-[680px] w-full border-collapse text-left text-sm">
             <thead className="bg-white/5 text-white">
               <tr>
-                <th className="px-4 py-4 font-semibold">{locale === 'ro' ? 'Caracteristică' : 'Параметр'}</th>
+                <th className="px-4 py-4 font-semibold">{featureLabelByLocale[locale]}</th>
                 {pricingData.map(plan => (
                   <th key={plan.id} className="px-4 py-4 font-semibold">
                     {plan.name[locale]}

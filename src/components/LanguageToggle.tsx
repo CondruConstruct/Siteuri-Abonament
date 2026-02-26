@@ -19,6 +19,13 @@ export function LanguageToggle() {
       >
         RU
       </button>
+      <button
+        type="button"
+        onClick={() => setLocale('en')}
+        className={`rounded-full px-3 py-1 transition ${locale === 'en' ? 'bg-electric text-white shadow-glow' : 'text-muted hover:text-white'}`}
+      >
+        EN
+      </button>
     </div>
   )
 }

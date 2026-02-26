@@ -1,10 +1,28 @@
 import { useMemo, useState } from 'react'
+import type { Locale, PlanTier } from '../types'
 import { Section } from '../components/Section'
 import { ctaLabels, seoByPage, worksContent, worksProjects } from '../content/siteContent'
 import { useContactModal } from '../context/ContactModalContext'
 import { useLanguage } from '../context/LanguageContext'
 import { useSeo } from '../hooks/useSeo'
-import type { PlanTier } from '../types'
+
+const similarButtonByLocale: Record<Locale, string> = {
+  ro: 'Vreau similar',
+  ru: 'Хочу похожий',
+  en: 'I want similar',
+}
+
+const preferredModelTitleByLocale: Record<Locale, string> = {
+  ro: 'Ai un model preferat?',
+  ru: 'Есть понравившийся пример?',
+  en: 'Do you have a preferred style?',
+}
+
+const preferredModelTextByLocale: Record<Locale, string> = {
+  ro: 'Spune-ne ce stil îți place, iar noi îl adaptăm pentru businessul tău.',
+  ru: 'Скажите, какой стиль вам нравится, и мы адаптируем его под ваш бизнес.',
+  en: 'Tell us which style you like, and we will adapt it for your business.',
+}
 
 export function WorksPage() {
   const { locale } = useLanguage()
@@ -64,7 +82,7 @@ export function WorksPage() {
                 onClick={openModal}
                 className="mt-4 rounded-lg bg-electric px-4 py-2 text-xs font-semibold text-white transition hover:bg-cyan"
               >
-                {locale === 'ro' ? 'Vreau similar' : 'Хочу похожий'}
+                {similarButtonByLocale[locale]}
               </button>
             </div>
           </article>
@@ -72,14 +90,8 @@ export function WorksPage() {
       </div>
 
       <div className="mt-10 rounded-2xl border border-white/10 bg-white/[0.02] p-6">
-        <h3 className="font-manrope text-2xl font-semibold text-white">
-          {locale === 'ro' ? 'Ai un model preferat?' : 'Есть понравившийся пример?'}
-        </h3>
-        <p className="mt-2 text-sm text-muted">
-          {locale === 'ro'
-            ? 'Spune-ne ce stil îți place, iar noi îl adaptăm pentru businessul tău.'
-            : 'Скажите, какой стиль вам нравится, и мы адаптируем его под ваш бизнес.'}
-        </p>
+        <h3 className="font-manrope text-2xl font-semibold text-white">{preferredModelTitleByLocale[locale]}</h3>
+        <p className="mt-2 text-sm text-muted">{preferredModelTextByLocale[locale]}</p>
         <button
           type="button"
           onClick={openModal}

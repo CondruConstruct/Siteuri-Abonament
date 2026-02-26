@@ -14,8 +14,13 @@ const STORAGE_KEY = 'site-language'
 
 function getInitialLocale(): Locale {
   if (typeof window === 'undefined') return 'ro'
+
   const saved = window.localStorage.getItem(STORAGE_KEY)
-  return saved === 'ru' ? 'ru' : 'ro'
+  if (saved === 'ro' || saved === 'ru' || saved === 'en') {
+    return saved
+  }
+
+  return 'ro'
 }
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
@@ -27,7 +32,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   }
 
   const toggleLocale = () => {
-    const nextLocale = locale === 'ro' ? 'ru' : 'ro'
+    const nextLocale = locale === 'ro' ? 'ru' : locale === 'ru' ? 'en' : 'ro'
     setLocale(nextLocale)
   }
 

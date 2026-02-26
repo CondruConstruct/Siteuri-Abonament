@@ -1,4 +1,4 @@
-# Siteuri-Abonament (RO + RU)
+# Siteuri-Abonament (RO + RU + EN)
 
 Website complet multi-page pentru companie de creare site-uri, realizat cu **Vite + React + TypeScript + Tailwind CSS**.
 
@@ -26,7 +26,7 @@ Website complet multi-page pentru companie de creare site-uri, realizat cu **Vit
 - Contacte mereu vizibile în header + footer:
   - `jbpsuport@gmail.com`
   - `+37368694844`
-- Site bilingv complet: **RO / RU** (toggle în header, persistă în localStorage)
+- Site trilingv complet: **RO / RU / EN** (toggle în header, persistă în localStorage)
 - Modal contact reutilizabil (accesibil):
   - close cu `ESC`
   - close la click outside
@@ -44,7 +44,7 @@ Website complet multi-page pentru companie de creare site-uri, realizat cu **Vit
 ## Structură importantă
 
 - `src/config/pricingData.ts` – datele pachetelor (ușor de modificat)
-- `src/content/siteContent.ts` – tot conținutul RO/RU (texte, FAQ, testimoniale, SEO)
+- `src/content/siteContent.ts` – tot conținutul RO/RU/EN (texte, FAQ, testimoniale, SEO)
 - `src/components/` – componente reutilizabile (`Header`, `Footer`, `PricingCards`, `ContactModal`, `LanguageToggle`, `Section`)
 - `src/pages/` – paginile principale
 - `src/utils/sendTelegramLead.ts` – trimiterea formularului către Telegram Bot API

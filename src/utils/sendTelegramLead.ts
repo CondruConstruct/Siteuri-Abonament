@@ -1,27 +1,34 @@
+import type { Locale } from '../types'
+
 type LeadPayload = {
   name: string
   email: string
   message: string
-  locale: 'ro' | 'ru'
+  locale: Locale
 }
 
 const botToken = import.meta.env.VITE_TELEGRAM_BOT_TOKEN?.trim()
 const chatId = import.meta.env.VITE_TELEGRAM_CHAT_ID?.trim()
+
+const languageLabelByLocale: Record<Locale, string> = {
+  ro: 'RO',
+  ru: 'RU',
+  en: 'EN',
+}
 
 export async function sendTelegramLead(payload: LeadPayload) {
   if (!botToken || !chatId) {
     return { ok: false, reason: 'missing-config' as const }
   }
 
-  const languageLabel = payload.locale === 'ro' ? 'RO' : 'RU'
   const text = [
-    '🆕 Cerere nouă de pe site',
+    '🆕 New website lead',
     '',
-    `👤 Nume: ${payload.name}`,
+    `👤 Name: ${payload.name}`,
     `📧 Email: ${payload.email}`,
-    `🌐 Limbă: ${languageLabel}`,
+    `🌐 Language: ${languageLabelByLocale[payload.locale]}`,
     '',
-    '💬 Mesaj:',
+    '💬 Message:',
     payload.message,
   ].join('\n')
 

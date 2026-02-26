@@ -1,5 +1,6 @@
 import { Mail, Phone, X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
+import type { Locale } from '../types'
 import { contactInfo } from '../content/siteContent'
 import { useLanguage } from '../context/LanguageContext'
 import { sendTelegramLead } from '../utils/sendTelegramLead'
@@ -13,6 +14,55 @@ type SubmitState = 'idle' | 'sending' | 'success' | 'error'
 
 const FOCUSABLE =
   'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+
+const modalCopy: Record<
+  Locale,
+  {
+    title: string
+    subtitle: string
+    namePlaceholder: string
+    messagePlaceholder: string
+    sending: string
+    submit: string
+    success: string
+    error: string
+    closeLabel: string
+  }
+> = {
+  ro: {
+    title: 'Cere ofertă rapid',
+    subtitle: 'Completează scurt formularul și îți trimitem răspuns rapid pe contact.',
+    namePlaceholder: 'Nume',
+    messagePlaceholder: 'Ce site dorești + domeniul dorit',
+    sending: 'Se trimite...',
+    submit: 'Trimite cererea',
+    success: 'Mesaj trimis pe Telegram. Revenim rapid.',
+    error: 'Eroare la trimitere. Scrie direct pe email/telefon.',
+    closeLabel: 'Închide fereastra',
+  },
+  ru: {
+    title: 'Быстрый запрос оферты',
+    subtitle: 'Кратко заполните форму, и мы быстро ответим вам по контактам.',
+    namePlaceholder: 'Имя',
+    messagePlaceholder: 'Какой сайт нужен + желаемый домен',
+    sending: 'Отправка...',
+    submit: 'Отправить запрос',
+    success: 'Сообщение отправлено в Telegram. Скоро ответим.',
+    error: 'Ошибка отправки. Напишите напрямую на email/телефон.',
+    closeLabel: 'Закрыть окно',
+  },
+  en: {
+    title: 'Quick offer request',
+    subtitle: 'Fill in the short form and we will contact you quickly.',
+    namePlaceholder: 'Name',
+    messagePlaceholder: 'What website do you need + preferred domain',
+    sending: 'Sending...',
+    submit: 'Send request',
+    success: 'Message sent to Telegram. We will reply soon.',
+    error: 'Send failed. Please contact us directly by email/phone.',
+    closeLabel: 'Close modal',
+  },
+}
 
 export function ContactModal({ open, onClose }: ContactModalProps) {
   const { locale } = useLanguage()
@@ -93,11 +143,7 @@ export function ContactModal({ open, onClose }: ContactModalProps) {
     setSubmitState('error')
   }
 
-  const title = locale === 'ro' ? 'Cere ofertă rapid' : 'Быстрый запрос оферты'
-  const subtitle =
-    locale === 'ro'
-      ? 'Completează scurt formularul și îți trimitem răspuns rapid pe contact.'
-      : 'Кратко заполните форму, и мы быстро ответим вам по контактам.'
+  const copy = modalCopy[locale]
 
   return (
     <div className="fixed inset-0 z-[90] flex items-center justify-center bg-black/70 px-4" onMouseDown={onClose} role="presentation">
@@ -105,23 +151,23 @@ export function ContactModal({ open, onClose }: ContactModalProps) {
         ref={panelRef}
         role="dialog"
         aria-modal="true"
-        aria-label={title}
+        aria-label={copy.title}
         onMouseDown={event => event.stopPropagation()}
         className="w-full max-w-lg rounded-3xl border border-white/15 bg-[#090d15] p-6 shadow-2xl"
       >
         <div className="mb-5 flex items-center justify-between gap-3">
-          <h3 className="font-manrope text-2xl font-semibold text-white">{title}</h3>
+          <h3 className="font-manrope text-2xl font-semibold text-white">{copy.title}</h3>
           <button
             type="button"
             onClick={onClose}
             className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-white transition hover:bg-white/10"
-            aria-label="Close modal"
+            aria-label={copy.closeLabel}
           >
             <X size={18} />
           </button>
         </div>
 
-        <p className="mb-5 text-sm text-muted">{subtitle}</p>
+        <p className="mb-5 text-sm text-muted">{copy.subtitle}</p>
 
         <div className="mb-5 grid gap-2 rounded-2xl border border-white/10 bg-white/[0.03] p-4 text-sm text-white/90">
           <a href={`mailto:${contactInfo.email}`} className="inline-flex items-center gap-2 transition hover:text-cyan">
@@ -139,7 +185,7 @@ export function ContactModal({ open, onClose }: ContactModalProps) {
             name="name"
             required
             type="text"
-            placeholder={locale === 'ro' ? 'Nume' : 'Имя'}
+            placeholder={copy.namePlaceholder}
             className="w-full rounded-xl border border-white/15 bg-obsidian px-3 py-2 text-sm text-white outline-none transition focus:border-cyan"
           />
           <input
@@ -153,11 +199,7 @@ export function ContactModal({ open, onClose }: ContactModalProps) {
             name="message"
             required
             rows={4}
-            placeholder={
-              locale === 'ro'
-                ? 'Ce site dorești + domeniul dorit'
-                : 'Какой сайт нужен + желаемый домен'
-            }
+            placeholder={copy.messagePlaceholder}
             className="w-full rounded-xl border border-white/15 bg-obsidian px-3 py-2 text-sm text-white outline-none transition focus:border-cyan"
           />
 
@@ -166,30 +208,16 @@ export function ContactModal({ open, onClose }: ContactModalProps) {
             disabled={submitState === 'sending'}
             className="w-full rounded-xl bg-electric px-4 py-3 text-sm font-semibold text-white transition hover:bg-cyan disabled:cursor-not-allowed disabled:opacity-70"
           >
-            {submitState === 'sending'
-              ? locale === 'ro'
-                ? 'Se trimite...'
-                : 'Отправка...'
-              : locale === 'ro'
-                ? 'Trimite cererea'
-                : 'Отправить запрос'}
+            {submitState === 'sending' ? copy.sending : copy.submit}
           </button>
         </form>
 
         {submitState === 'success' ? (
-          <p className="mt-3 rounded-xl border border-cyan/40 bg-cyan/10 px-3 py-2 text-xs text-white">
-            {locale === 'ro'
-              ? 'Mesaj trimis pe Telegram. Revenim rapid.'
-              : 'Сообщение отправлено в Telegram. Скоро ответим.'}
-          </p>
+          <p className="mt-3 rounded-xl border border-cyan/40 bg-cyan/10 px-3 py-2 text-xs text-white">{copy.success}</p>
         ) : null}
 
         {submitState === 'error' ? (
-          <p className="mt-3 rounded-xl border border-red-500/40 bg-red-500/10 px-3 py-2 text-xs text-white">
-            {locale === 'ro'
-              ? 'Eroare la trimitere. Scrie direct pe email/telefon.'
-              : 'Ошибка отправки. Напишите напрямую на email/телефон.'}
-          </p>
+          <p className="mt-3 rounded-xl border border-red-500/40 bg-red-500/10 px-3 py-2 text-xs text-white">{copy.error}</p>
         ) : null}
       </div>
     </div>

@@ -1,4 +1,4 @@
-export type Locale = 'ro' | 'ru'
+export type Locale = 'ro' | 'ru' | 'en'
 
 export type PlanTier = 'landing' | 'presentation' | 'store'
 
