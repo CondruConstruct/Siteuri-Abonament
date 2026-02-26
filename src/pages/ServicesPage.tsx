@@ -43,7 +43,7 @@ export function ServicesPage() {
       ],
     },
     {
-      name: { ro: '2 limbi RO/RU', ru: '2 языка RO/RU', en: '2 languages RO/RU' },
+      name: { ro: '3 limbi RO/RU/EN', ru: '3 языка RO/RU/EN', en: '3 languages RO/RU/EN' },
       values: ['✓', '✓', '✓'],
     },
     {

@@ -37,9 +37,9 @@ export const pricingData: Plan[] = [
     subtitle: { ro: '1 pagină', ru: '1 страница', en: '1 page' },
     price: { ro: '15 EUR / lună', ru: '15 EUR / месяц', en: '15 EUR / month' },
     features: {
-      ro: ['2 limbi (RO/RU)', 'Conținut după dorința clientului'],
-      ru: ['2 языка (RO/RU)', 'Контент по запросу клиента'],
-      en: ['2 languages (RO/RU)', 'Content tailored to client request'],
+      ro: ['3 limbi (RO/RU/EN)', 'Conținut după dorința clientului'],
+      ru: ['3 языка (RO/RU/EN)', 'Контент по запросу клиента'],
+      en: ['3 languages (RO/RU/EN)', 'Content tailored to client request'],
     },
     specificBenefits: {
       ro: [
@@ -74,9 +74,9 @@ export const pricingData: Plan[] = [
     subtitle: { ro: 'până la 5 pagini', ru: 'до 5 страниц', en: 'up to 5 pages' },
     price: { ro: '23 EUR / lună', ru: '23 EUR / месяц', en: '23 EUR / month' },
     features: {
-      ro: ['2 limbi (RO/RU)', 'Structură profesională + adaptat pe mobil'],
-      ru: ['2 языка (RO/RU)', 'Профессиональная структура + адаптация под мобильные'],
-      en: ['2 languages (RO/RU)', 'Professional structure + mobile adaptation'],
+      ro: ['3 limbi (RO/RU/EN)', 'Structură profesională + adaptat pe mobil'],
+      ru: ['3 языка (RO/RU/EN)', 'Профессиональная структура + адаптация под мобильные'],
+      en: ['3 languages (RO/RU/EN)', 'Professional structure + mobile adaptation'],
     },
     specificBenefits: {
       ro: [
@@ -117,19 +117,19 @@ export const pricingData: Plan[] = [
     price: { ro: '32 EUR / lună', ru: '32 EUR / месяц', en: '32 EUR / month' },
     features: {
       ro: [
-        '2 limbi (RO/RU)',
+        '3 limbi (RO/RU/EN)',
         'Dashboard pentru produse',
         'Produse nelimitate',
         'Fără sistem de plată',
       ],
       ru: [
-        '2 языка (RO/RU)',
+        '3 языка (RO/RU/EN)',
         'Панель управления товарами',
         'Неограниченное количество товаров',
         'Без системы оплаты',
       ],
       en: [
-        '2 languages (RO/RU)',
+        '3 languages (RO/RU/EN)',
         'Product dashboard',
         'Unlimited products',
         'No payment system',

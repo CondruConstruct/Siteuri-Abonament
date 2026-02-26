@@ -424,15 +424,15 @@ export const seoByPage = {
   home: {
     ro: {
       title: 'Site de la 15 EUR lunar | Website-uri premium pe abonament',
-      description: 'Creăm website-uri moderne în RO/RU cu abonament lunar: landing, prezentare și magazin fără plată online.',
+      description: 'Creăm website-uri moderne în RO/RU/EN cu abonament lunar: landing, prezentare și magazin fără plată online.',
     },
     ru: {
       title: 'Сайт от 15 EUR в месяц | Премиальные сайты по подписке',
-      description: 'Создаём современные сайты на RO/RU по ежемесячной подписке: landing, презентация и магазин без онлайн-оплаты.',
+      description: 'Создаём современные сайты на RO/RU/EN по ежемесячной подписке: landing, презентация и магазин без онлайн-оплаты.',
     },
     en: {
       title: 'Website from 15 EUR/month | Premium websites on subscription',
-      description: 'We build modern websites in RO/RU with monthly subscription: landing pages, presentation websites, and stores without online checkout.',
+      description: 'We build modern websites in RO/RU/EN with monthly subscription: landing pages, presentation websites, and stores without online checkout.',
     },
   },
   services: {
